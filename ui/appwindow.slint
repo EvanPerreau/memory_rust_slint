@@ -1,0 +1,53 @@
+import { MemoryTile } from "components/memory_tile.slint";
+
+struct TileData {
+    image: image,
+    image_visible: bool,
+    solved: bool,
+}
+
+export component AppWindow inherits Window {
+    title: "Memory Game";
+    width: 326px;
+    height: 380px;
+    callback check_if_pair_solved();
+    in property <bool> disable_tiles;
+    in property <string> current_text;
+    in property <color> current_text_color;
+    
+    in property <[TileData]> memory_tiles_data : [
+        { image: @image-url("../icons/at.png") },
+        { image: @image-url("../icons/balance-scale.png") },
+        { image: @image-url("../icons/bicycle.png") },
+        { image: @image-url("../icons/bus.png") },
+        { image: @image-url("../icons/cloud.png") },
+        { image: @image-url("../icons/cogs.png") },
+        { image: @image-url("../icons/motorcycle.png") },
+        { image: @image-url("../icons/video.png") },
+    ];
+
+    for tile[i] in memory_tiles_data: MemoryTile {
+        x: mod(i, 4) * 74px + 20px;
+        y: floor(i / 4) * 74px + 20px;
+        icon: tile.image;
+        open_curtain: tile.image_visible || tile.solved;
+        solved: tile.solved;
+        clicked => {
+            if (!root.disable_tiles) {
+                tile.image_visible = true;
+                root.check_if_pair_solved();
+            }
+        }
+    }
+
+    Text {
+        x: 0;
+        horizontal-alignment: center;
+        y: 318px;
+        width: 100%;
+        text: root.current_text;
+        font-size: 16px;
+        font-weight: 900;
+        color: current_text_color;
+    }
+}
